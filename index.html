@@ -10596,19 +10596,19 @@ var $elm$core$Basics$never = function (_v0) {
 	}
 };
 var $elm$browser$Browser$element = _Browser_element;
-var $author$project$Common$Coordinate = F2(
+var $author$project$Core$Coordinate = F2(
 	function (x, y) {
 		return {x: x, y: y};
 	});
 var $author$project$Main$init = function (flags) {
 	return _Utils_Tuple2(
 		{
-			ant: A2($author$project$Common$Coordinate, 0, 0),
+			ant: A2($author$project$Core$Coordinate, 0, 0),
 			blackSquares: _List_fromArray(
 				[
-					A2($author$project$Common$Coordinate, 0, 0),
-					A2($author$project$Common$Coordinate, 1, 1),
-					A2($author$project$Common$Coordinate, 2, 2)
+					A2($author$project$Core$Coordinate, 0, 0),
+					A2($author$project$Core$Coordinate, 1, 1),
+					A2($author$project$Core$Coordinate, 2, 2)
 				])
 		},
 		$elm$core$Platform$Cmd$none);
@@ -12957,14 +12957,31 @@ var $rtfeldman$elm_css$VirtualDom$Styled$toUnstyled = function (vdom) {
 };
 var $rtfeldman$elm_css$Html$Styled$toUnstyled = $rtfeldman$elm_css$VirtualDom$Styled$toUnstyled;
 var $author$project$Core$tick = function (board) {
-	return {
-		ant: A2($author$project$Common$Coordinate, -1, -1),
-		blackSquares: _List_fromArray(
-			[
-				A2($author$project$Common$Coordinate, 0, 0),
-				A2($author$project$Common$Coordinate, 1, 1)
-			])
-	};
+	var _v0 = board.blackSquares;
+	if (!_v0.b) {
+		return {
+			ant: {x: board.ant.x + 1, y: 0},
+			blackSquares: _List_fromArray(
+				[board.ant])
+		};
+	} else {
+		return _Utils_eq(
+			board.blackSquares,
+			_List_fromArray(
+				[
+					A2($author$project$Core$Coordinate, -1, -1)
+				])) ? {
+			ant: A2($author$project$Core$Coordinate, 2, 0),
+			blackSquares: _List_fromArray(
+				[
+					A2($author$project$Core$Coordinate, 1, 0),
+					A2($author$project$Core$Coordinate, -1, -1)
+				])
+		} : {
+			ant: A2($author$project$Core$Coordinate, -1, 0),
+			blackSquares: _List_Nil
+		};
+	}
 };
 var $author$project$Main$update = F2(
 	function (msg, board) {
