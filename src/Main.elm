@@ -2,13 +2,10 @@ module Main exposing (..)
 
 import Browser
 import Css exposing (..)
-import Html
 import Html.Styled exposing (..)
-import Html.Styled.Attributes exposing (css, href, src)
-import Html.Styled.Events exposing (onClick)
-import Common exposing (..)
+import Html.Styled.Attributes exposing (css)
 import Time
-import Core
+import Core exposing (..)
 
 
 
