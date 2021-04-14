@@ -1,8 +1,11 @@
 module Example exposing (..)
 
-import Core exposing (..)
+import Ant exposing (move)
 import Expect exposing (Expectation)
+import Orientation exposing (Orientation(..))
+import SquareColor exposing (SquareColor(..))
 import Test exposing (..)
+import Coordinate exposing (Coordinate)
 
 
 
@@ -18,120 +21,68 @@ import Test exposing (..)
 --la grille sont blanches ou noires et où la case de la fourmi peut prendre huit états différents, codant à la fois sa couleur et la direction de la fourmi.
 
 
-move : Coordinate -> Color -> Orientation -> Coordinate
-move ant color orientation =
-    case orientation of
-        S ->
-            case color of
-                Black ->
-                    { ant | x = ant.x + 1 }
-
-                _ ->
-                    { ant | x = ant.x - 1 }
-
-        _ ->
-            case color of
-                Black ->
-                    { ant | x = ant.x - 1 }
-
-                _ ->
-                    { ant | x = ant.x + 1 }
-
-
-type Color
-    = White
-    | Black
-
-
-type Orientation
-    = N
-    | S
-    | W
-    | E
-
 
 suite : Test
 suite =
     describe "Langton ant"
-        [ describe "Ant"
-            [ test "first" <|
-                \_ ->
-                    let
-                        nextAntCoordinates =
-                            move (Coordinate 0 0) White N
-                    in
-                    Expect.equal nextAntCoordinates <| Coordinate 1 0
-            , test "2" <|
-                \_ ->
-                    let
-                        nextAntCoordinates =
-                            move (Coordinate 2 0) White N
-                    in
-                    Expect.equal nextAntCoordinates <| Coordinate 3 0
-            , test "left" <|
-                \_ ->
-                    let
-                        nextAntCoordinates =
-                            move (Coordinate 0 0) Black N
-                    in
-                    Expect.equal nextAntCoordinates <| Coordinate -1 0
-            , test "orientation" <|
-                \_ ->
-                    let
-                        nextAntCoordinates =
-                            move (Coordinate 0 0) White S
-                    in
-                    Expect.equal nextAntCoordinates <| Coordinate -1 0
-            , test "orientation 2" <|
-                \_ ->
-                    let
-                        nextAntCoordinates =
-                            move (Coordinate 0 0) Black S
-                    in
-                    Expect.equal nextAntCoordinates <| Coordinate 1 0
-            ]
-        , describe "Board"
-            [ test "first" <|
-                \_ ->
-                    let
-                        updatedBoard =
-                            tick { ant = Coordinate 0 0, blackSquares = [] }
-                    in
-                    Expect.equal updatedBoard
-                        { ant = Coordinate 1 0
-                        , blackSquares = [ Coordinate 0 0 ]
-                        }
-            , test "second" <|
-                \_ ->
-                    let
-                        updatedBoard =
-                            tick { ant = Coordinate 0 0, blackSquares = [ Coordinate 0 0 ] }
-                    in
-                    Expect.equal updatedBoard
-                        { ant = Coordinate -1 0
-                        , blackSquares = []
-                        }
-            , test "third" <|
-                \_ ->
-                    let
-                        updatedBoard =
-                            { ant = Coordinate 1 0, blackSquares = [] }
-                                |> tick
-                    in
-                    Expect.equal updatedBoard
-                        { ant = Coordinate 2 0
-                        , blackSquares = [ Coordinate 1 0 ]
-                        }
-            , test "4" <|
-                \_ ->
-                    let
-                        updatedBoard =
-                            { ant = Coordinate 1 0, blackSquares = [ Coordinate -1 -1 ] }
-                                |> tick
-                    in
-                    Expect.equal updatedBoard
-                        { ant = Coordinate 2 0
-                        , blackSquares = [ Coordinate 1 0, Coordinate -1 -1 ]
-                        }
+        [ describe "Move"
+            [ describe "On white square"
+                [ test "North -> East" <|
+                    \_ ->
+                        let
+                            nextAntCoordinates =
+                                move
+                                    White
+                                    { coordinates = Coordinate 0 0
+                                    , orientation = North
+                                    }
+                        in
+                        Expect.equal nextAntCoordinates <|
+                            { coordinates = Coordinate 1 0
+                            , orientation = East
+                            }
+                , test "North -> East 2" <|
+                    \_ ->
+                        let
+                            nextAntCoordinates =
+                                move
+                                    White
+                                    { coordinates = Coordinate 1 0
+                                    , orientation = North
+                                    }
+                        in
+                        Expect.equal nextAntCoordinates <|
+                            { coordinates = Coordinate 2 0
+                            , orientation = East
+                            }
+                , test "North -> East 3" <|
+                    \_ ->
+                        let
+                            nextAntCoordinates =
+                                move
+                                    White
+                                    { coordinates = Coordinate 1 1
+                                    , orientation = North
+                                    }
+                        in
+                        Expect.equal nextAntCoordinates <|
+                            { coordinates = Coordinate 2 1
+                            , orientation = East
+                            }
+                , test "East -> South" <|
+                    \_ ->
+                        let
+                            nextAntCoordinates =
+                                move
+                                    White
+                                    { coordinates = Coordinate 0 0
+                                    , orientation = East
+                                    }
+                        in
+                        Expect.equal nextAntCoordinates <|
+                            { coordinates = Coordinate 0 -1
+                            , orientation = South
+                            }
+                ]
             ]
         ]

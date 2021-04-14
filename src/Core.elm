@@ -1,30 +1,47 @@
 module Core exposing (..)
 
+import Ant exposing (Ant)
+import Coordinate exposing (Coordinate)
+import SquareColor exposing (SquareColor(..))
 
-type alias Coordinate =
-    { x : Float
-    , y : Float
-    }
 
 
 type alias Board =
-    { ant : Coordinate
+    { ant : Ant
     , blackSquares : List Coordinate
     }
 
+
 tick : Board -> Board
 tick board =
-    case board.blackSquares of
-        [] ->
-            { ant = { x = board.ant.x + 1, y = 0 }
-            , blackSquares = [ board.ant ]
-            }
+    { ant = Ant.move (currentColor board) board.ant
+    , blackSquares =
+        flipCurrentSquare board
+            |> (\cs ->
+                    case cs of
+                        Just square ->
+                            square :: board.blackSquares
 
-        _ ->
-            if board.blackSquares == [ Coordinate -1 -1 ] then
-                { ant = Coordinate 2 0
-                , blackSquares = [ Coordinate 1 0, Coordinate -1 -1 ]
-                }
+                        Nothing ->
+                            board.blackSquares |> List.filter (\c -> c /= board.ant.coordinates)
+               )
+    }
 
-            else
-                { ant = Coordinate -1 0, blackSquares = [] }
+
+flipCurrentSquare : Board -> Maybe Coordinate
+flipCurrentSquare board =
+    case currentColor board of
+        Black ->
+            Nothing
+
+        White ->
+            Just board.ant.coordinates
+
+
+currentColor : Board -> SquareColor
+currentColor board =
+    board.blackSquares
+        |> List.filter (\c -> c == board.ant.coordinates)
+        |> List.head
+        |> Maybe.map (\_ -> Black)
+        |> Maybe.withDefault White
