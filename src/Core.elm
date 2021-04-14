@@ -2,13 +2,14 @@ module Core exposing (..)
 
 import Ant exposing (Ant)
 import Coordinate exposing (Coordinate)
+import Dict exposing (Dict)
 import SquareColor exposing (SquareColor(..))
 
 
 
 type alias Board =
     { ant : Ant
-    , blackSquares : List Coordinate
+    , blackSquares : Dict String Coordinate
     }
 
 
@@ -20,13 +21,16 @@ tick board =
             |> (\cs ->
                     case cs of
                         Just square ->
-                            square :: board.blackSquares
+                            Dict.insert (squareId square) square board.blackSquares
 
                         Nothing ->
-                            board.blackSquares |> List.filter (\c -> c /= board.ant.coordinates)
+                            Dict.remove (squareId board.ant.coordinates) board.blackSquares
                )
     }
 
+squareId square =
+    (String.fromFloat square.x, String.fromFloat square.y)
+    |>  (\(x,y) -> "x" ++ x ++ "y" ++ y)
 
 flipCurrentSquare : Board -> Maybe Coordinate
 flipCurrentSquare board =
@@ -40,8 +44,6 @@ flipCurrentSquare board =
 
 currentColor : Board -> SquareColor
 currentColor board =
-    board.blackSquares
-        |> List.filter (\c -> c == board.ant.coordinates)
-        |> List.head
+    Dict.get (squareId board.ant.coordinates) board.blackSquares
         |> Maybe.map (\_ -> Black)
         |> Maybe.withDefault White

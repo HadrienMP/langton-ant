@@ -4,6 +4,7 @@ import Ant exposing (Ant)
 import Browser
 import Coordinate exposing (Coordinate)
 import Core exposing (..)
+import Dict
 import Html.Styled exposing (..)
 import Orientation exposing (Orientation(..))
 import Svg.Styled exposing (Svg, svg)
@@ -38,7 +39,7 @@ init : () -> ( Model, Cmd Msg )
 init flags =
     ( { board =
             { ant = { coordinates = Coordinate 0 0, orientation = West }
-            , blackSquares = []
+            , blackSquares = Dict.fromList []
             }
       , turns = 0
       , start = Time.millisToPosix 0
@@ -87,22 +88,29 @@ subscriptions _ =
 view : Model -> Html Msg
 view model =
     let
-        params = { origin = 200, size = 4 }
+        params =
+            { origin = 200, size = 4 }
+        elapsed = Time.posixToMillis model.now - Time.posixToMillis model.start
     in
     div []
         [ ul []
             [ li [] [ text <| (++) "Turns: " <| String.fromInt model.turns ]
-            , li [] [ text <| (++) "Elapsed: " <| String.fromInt (Time.posixToMillis model.now - Time.posixToMillis model.start) ]
+            , li [] [ text <| (++) "Elapsed: " <| String.fromInt elapsed ]
+            , li [] [ text <| (++) "Turn time: " <| String.fromInt (elapsed // model.turns) ++ "ms" ]
             ]
         , svg
             [ Svg.Styled.Attributes.width "1000", Svg.Styled.Attributes.height "1000" ]
-            ((model.board.blackSquares |> List.map (displaySquare params) )
+            ((model.board.blackSquares
+                |> Dict.values
+                |> List.map (displaySquare params)
+             )
                 ++ [ displayAnt model.board.ant params ]
             )
         ]
 
+
 type alias Params =
-    {origin: Float, size: Float}
+    { origin : Float, size : Float }
 
 
 displayAnt : Ant -> Params -> Svg Msg
