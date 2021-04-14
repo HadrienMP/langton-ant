@@ -86,8 +86,10 @@ view : Model -> Html Msg
 view model =
     let
         params =
-            { origin = 200, size = 4 }
-        elapsed = Time.posixToMillis model.now - Time.posixToMillis model.start
+            { origin = 200, size = 10 }
+
+        elapsed =
+            Time.posixToMillis model.now - Time.posixToMillis model.start
     in
     div []
         [ ul []
