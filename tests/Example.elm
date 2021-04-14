@@ -21,7 +21,7 @@ import Test exposing (..)
 move : Coordinate -> Color -> Orientation -> Coordinate
 move ant color orientation =
     case orientation of
-        S ->
+        South ->
             case color of
                 Black ->
                     { ant | x = ant.x + 1 }
@@ -43,13 +43,6 @@ type Color
     | Black
 
 
-type Orientation
-    = N
-    | S
-    | W
-    | E
-
-
 suite : Test
 suite =
     describe "Langton ant"
@@ -58,35 +51,35 @@ suite =
                 \_ ->
                     let
                         nextAntCoordinates =
-                            move (Coordinate 0 0) White N
+                            move (Coordinate 0 0) White North
                     in
                     Expect.equal nextAntCoordinates <| Coordinate 1 0
             , test "2" <|
                 \_ ->
                     let
                         nextAntCoordinates =
-                            move (Coordinate 2 0) White N
+                            move (Coordinate 2 0) White North
                     in
                     Expect.equal nextAntCoordinates <| Coordinate 3 0
             , test "left" <|
                 \_ ->
                     let
                         nextAntCoordinates =
-                            move (Coordinate 0 0) Black N
+                            move (Coordinate 0 0) Black North
                     in
                     Expect.equal nextAntCoordinates <| Coordinate -1 0
             , test "orientation" <|
                 \_ ->
                     let
                         nextAntCoordinates =
-                            move (Coordinate 0 0) White S
+                            move (Coordinate 0 0) White South
                     in
                     Expect.equal nextAntCoordinates <| Coordinate -1 0
             , test "orientation 2" <|
                 \_ ->
                     let
                         nextAntCoordinates =
-                            move (Coordinate 0 0) Black S
+                            move (Coordinate 0 0) Black South
                     in
                     Expect.equal nextAntCoordinates <| Coordinate 1 0
             ]
@@ -95,42 +88,42 @@ suite =
                 \_ ->
                     let
                         updatedBoard =
-                            tick { ant = Coordinate 0 0, blackSquares = [] }
+                            tick { ant = { coordinates = Coordinate 0 0, orientation = West }, blackSquares = [] }
                     in
                     Expect.equal updatedBoard
-                        { ant = Coordinate 1 0
+                        { ant = {coordinates = Coordinate 1 0, orientation = North }
                         , blackSquares = [ Coordinate 0 0 ]
                         }
             , test "second" <|
                 \_ ->
                     let
                         updatedBoard =
-                            tick { ant = Coordinate 0 0, blackSquares = [ Coordinate 0 0 ] }
+                            tick { ant = { coordinates = Coordinate 0 0, orientation = East }, blackSquares = [ Coordinate 0 0 ] }
                     in
                     Expect.equal updatedBoard
-                        { ant = Coordinate -1 0
+                        { ant = { coordinates = Coordinate -1 0, orientation = North }
                         , blackSquares = []
                         }
             , test "third" <|
                 \_ ->
                     let
                         updatedBoard =
-                            { ant = Coordinate 1 0, blackSquares = [] }
+                            { ant = { coordinates = Coordinate 1 0, orientation = West }, blackSquares = [] }
                                 |> tick
                     in
                     Expect.equal updatedBoard
-                        { ant = Coordinate 2 0
+                        { ant = { coordinates = Coordinate 2 0, orientation = North }
                         , blackSquares = [ Coordinate 1 0 ]
                         }
             , test "4" <|
                 \_ ->
                     let
                         updatedBoard =
-                            { ant = Coordinate 1 0, blackSquares = [ Coordinate -1 -1 ] }
+                            { ant = { coordinates = Coordinate 1 0, orientation = West }, blackSquares = [ Coordinate -1 -1 ] }
                                 |> tick
                     in
                     Expect.equal updatedBoard
-                        { ant = Coordinate 2 0
+                        { ant = { coordinates = Coordinate 2 0, orientation = North }
                         , blackSquares = [ Coordinate 1 0, Coordinate -1 -1 ]
                         }
             ]
